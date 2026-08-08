@@ -43,73 +43,27 @@ class HUD:
 
 
     def draw(self, screen, player, weapon=None):
+        W, H = screen.get_size()
 
         # Nome do personagem
-        name_text = self.font.render(
-            f"{player.name}",
-            True,
-            (255, 200, 0)
-        )
-        screen.blit(name_text, (20, HEIGHT - 90))
+        name_text = self.font.render(f"{player.name}", True, (255, 200, 0))
+        screen.blit(name_text, (20, H - 90))
 
         # Habilidade do personagem
-        skill_text = self.font.render(
-            f"Habilidade: {player.skill}",
-            True,
-            (0, 200, 255)
-        )
-        screen.blit(skill_text, (20, HEIGHT - 115))
+        skill_text = self.font.render(f"Habilidade: {player.skill}", True, (0, 200, 255))
+        screen.blit(skill_text, (20, H - 115))
 
         # Vida
-
-        self.draw_bar(
-            screen,
-            20,
-            HEIGHT - 60,
-            player.health,
-            player.max_health,
-            RED
-        )
-
+        self.draw_bar(screen, 20, H - 60, player.health, player.max_health, RED)
 
         # Energia
+        self.draw_bar(screen, 20, H - 35, player.energy, PLAYER_MAX_ENERGY, BLUE)
 
-        self.draw_bar(
-            screen,
-            20,
-            HEIGHT - 35,
-            player.energy,
-            PLAYER_MAX_ENERGY,
-            BLUE
-        )
-
-
-        # Texto
-
-        life_text = self.font.render(
-            f"HP: {player.health}/{player.max_health}",
-            True,
-            WHITE
-        )
-
-
-        energy_text = self.font.render(
-            f"ENERGIA: {player.energy}/{PLAYER_MAX_ENERGY}",
-            True,
-            WHITE
-        )
-
-
-        screen.blit(
-            life_text,
-            (250, HEIGHT - 60)
-        )
-
-
-        screen.blit(
-            energy_text,
-            (250, HEIGHT - 35)
-        )
+        # Texto HP / Energia
+        life_text   = self.font.render(f"HP: {int(player.health)}/{player.max_health}", True, WHITE)
+        energy_text = self.font.render(f"ENERGIA: {int(player.energy)}/{PLAYER_MAX_ENERGY}", True, WHITE)
+        screen.blit(life_text,   (250, H - 60))
+        screen.blit(energy_text, (250, H - 35))
 
         # Munição da arma
         if weapon is not None:
@@ -119,6 +73,5 @@ class HUD:
             else:
                 ammo_label = f"MUNICAO: {weapon.magazine}/{weapon.max_magazine}"
                 ammo_color = WHITE
-
             ammo_text = self.font.render(ammo_label, True, ammo_color)
-            screen.blit(ammo_text, (WIDTH - ammo_text.get_width() - 20, HEIGHT - 40))
+            screen.blit(ammo_text, (W - ammo_text.get_width() - 20, H - 40))

@@ -28,11 +28,9 @@ class GameMap:
 
     def _build(self):
         if self.background:
-            bg_w, bg_h = self.background.get_size()
-            # Tile o background por todo o mapa
-            for ty in range(0, self.height, bg_h):
-                for tx in range(0, self.width, bg_w):
-                    self.surface.blit(self.background, (tx, ty))
+            # Esticar a imagem de fundo para cobrir o mapa inteiro — sem tiles duplicados
+            scaled_bg = pygame.transform.scale(self.background, (self.width, self.height))
+            self.surface.blit(scaled_bg, (0, 0))
         else:
             # Fallback: chão com grade de ruas
             ground1  = (55, 60, 70)

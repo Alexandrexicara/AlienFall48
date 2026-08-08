@@ -16,7 +16,9 @@ from character_select import CharacterSelect
 
 pygame.init()
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# Tela cheia — usa a resolução real do dispositivo
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+WIDTH, HEIGHT = screen.get_size()
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
@@ -42,13 +44,13 @@ wave             = 1
 wave_timer       = 0.0
 WAVE_INTERVAL    = 15.0   # segundos entre ondas
 
-# ── Controles mobile ───────────────────────────────────────────────────────
-JOYSTICK_CENTER  = (120, HEIGHT - 120)
-JOYSTICK_RADIUS  = 80
-FIRE_BTN         = (WIDTH - 100, HEIGHT - 120)
-FIRE_BTN_R       = 60
-RELOAD_BTN       = (WIDTH - 220, HEIGHT - 80)
-RELOAD_BTN_R     = 40
+# ── Controles mobile (posições relativas ao tamanho real da tela) ──────────
+JOYSTICK_RADIUS  = 90
+JOYSTICK_CENTER  = (JOYSTICK_RADIUS + 60, HEIGHT - JOYSTICK_RADIUS - 60)
+FIRE_BTN_R       = 70
+FIRE_BTN         = (WIDTH - FIRE_BTN_R - 50, HEIGHT - FIRE_BTN_R - 60)
+RELOAD_BTN_R     = 45
+RELOAD_BTN       = (WIDTH - RELOAD_BTN_R * 3 - 40, HEIGHT - RELOAD_BTN_R - 60)
 
 touch_joy_id     = None   # id do toque no joystick
 touch_joy_pos    = JOYSTICK_CENTER
@@ -323,7 +325,7 @@ async def main():
             # Info de onda
             font_w = pygame.font.SysFont("Arial", 22, True)
             wt = font_w.render(f"ONDA {wave}  |  Inimigos: {len(aliens)}", True, (255, 200, 0))
-            screen.blit(wt, (WIDTH // 2 - wt.get_width() // 2, 12))
+            screen.blit(wt, (screen.get_width() // 2 - wt.get_width() // 2, 12))
 
             # UI mobile
             if show_mobile_ui:

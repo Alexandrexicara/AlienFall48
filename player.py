@@ -7,9 +7,9 @@ class Player:
         self.x = float(x)
         self.y = float(y)
 
-        # 128x128 = 200% da sprite original 64x64
-        self.width  = 128
-        self.height = 128
+        # 192x192 = 300% da sprite original 64x64
+        self.width  = 192
+        self.height = 192
 
         if character:
             self.speed      = character.speed
@@ -69,7 +69,7 @@ class Player:
             frames = anims["idle"]
 
         idx = int(self._frame) % len(frames)
-        # Scale para 128x128 (200% do sprite 64x64 original)
+        # Scale para 192x192 (300% do sprite 64x64 original)
         img = pygame.transform.scale(frames[idx], (self.width, self.height))
         if self.facing_left:
             img = pygame.transform.flip(img, True, False)

@@ -7,12 +7,13 @@ from config import *
 
 # Tipos de inimigos disponíveis com suas configs
 ENEMY_TYPES = {
-    "drone":    {"folder": "drone",    "health": 30,  "speed": 160, "damage": 8,  "size": 48},
-    "brute":    {"folder": "brute",    "health": 120, "speed": 80,  "damage": 20, "size": 64},
-    "spider":   {"folder": "spider",   "health": 50,  "speed": 140, "damage": 12, "size": 48},
-    "parasite": {"folder": "parasite", "health": 25,  "speed": 180, "damage": 6,  "size": 40},
-    "queen":    {"folder": "queen",    "health": 300, "speed": 60,  "damage": 35, "size": 80},
-    "boss":     {"folder": "boss",     "health": 600, "speed": 50,  "damage": 50, "size": 96},
+    # size = 400% do sprite 64x64 = 256px; aliens são maiores que o jogador (192px)
+    "drone":    {"folder": "drone",    "health": 30,  "speed": 160, "damage": 8,  "size": 192},
+    "brute":    {"folder": "brute",    "health": 120, "speed": 80,  "damage": 20, "size": 256},
+    "spider":   {"folder": "spider",   "health": 50,  "speed": 140, "damage": 12, "size": 220},
+    "parasite": {"folder": "parasite", "health": 25,  "speed": 180, "damage": 6,  "size": 172},
+    "queen":    {"folder": "queen",    "health": 300, "speed": 60,  "damage": 35, "size": 320},
+    "boss":     {"folder": "boss",     "health": 600, "speed": 50,  "damage": 50, "size": 400},
 }
 
 def load_enemy_sprites(folder):

@@ -32,50 +32,16 @@ class Menu:
 
 
     def draw(self):
+        W, H = self.screen.get_size()
+        self.screen.fill(BLACK)
 
-        self.screen.fill(
-            BLACK
-        )
-
-
-        title = self.font_big.render(
-            "ALIEN FALL 48",
-            True,
-            ORANGE
-        )
-
-
-        self.screen.blit(
-            title,
-            (
-                WIDTH//2 - title.get_width()//2,
-                100
-            )
-        )
-
+        title = self.font_big.render("ALIEN FALL 48", True, ORANGE)
+        self.screen.blit(title, (W//2 - title.get_width()//2, H//4))
 
         for i, option in enumerate(self.options):
-
-            color = WHITE
-
-            if i == self.selected:
-                color = YELLOW
-
-
-            text = self.font.render(
-                option,
-                True,
-                color
-            )
-
-
-            self.screen.blit(
-                text,
-                (
-                    WIDTH//2 - text.get_width()//2,
-                    250 + i * 60
-                )
-            )
+            color = YELLOW if i == self.selected else WHITE
+            text  = self.font.render(option, True, color)
+            self.screen.blit(text, (W//2 - text.get_width()//2, H//2 + i * 70))
 
 
     def update(self, event):
@@ -108,15 +74,16 @@ class Menu:
                 return self.options[self.selected]
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # Clique esquerdo
+            if event.button == 1:
+                W, H = self.screen.get_size()
                 mouse_pos = pygame.mouse.get_pos()
                 for i, option in enumerate(self.options):
                     text = self.font.render(option, True, WHITE)
                     text_rect = pygame.Rect(
-                        WIDTH//2 - text.get_width()//2,
-                        250 + i * 60,
+                        W//2 - text.get_width()//2,
+                        H//2 + i * 70,
                         text.get_width(),
-                        40
+                        50
                     )
                     if text_rect.collidepoint(mouse_pos):
                         self.selected = i

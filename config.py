@@ -5,7 +5,7 @@
 
 TITLE = "Alien Fall 48"
 
-# Tela
+# Tela — será sobrescrito pelo display real em main.py
 WIDTH = 1280
 HEIGHT = 720
 
