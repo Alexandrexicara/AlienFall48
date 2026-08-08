@@ -6,92 +6,62 @@ class GameMap:
 
     def __init__(self, background_name="city.png"):
 
-        self.width = 5000
+        self.width  = 5000
         self.height = 5000
-
         self.tile_size = TILESIZE
 
-        # Carregar background
-        self.background = self.load_background(background_name)
-
+        self.background = self._load_bg(background_name)
         self.surface = pygame.Surface((self.width, self.height))
+        self._build()
 
-        self.create_map()
+    def _load_bg(self, name):
+        path = os.path.join("assets", "backgrounds", name)
+        if os.path.exists(path):
+            try:
+                return pygame.image.load(path).convert()
+            except Exception:
+                pass
+        return None
 
-    def load_background(self, background_name):
-        """Carrega o background da pasta assets/backgrounds/"""
-        try:
-            background_path = os.path.join("assets", "backgrounds", background_name)
-            if os.path.exists(background_path):
-                background = pygame.image.load(background_path).convert()
-                return background
-            else:
-                return None
-        except Exception as e:
-            return None
-
-    def create_map(self):
-
+    def _build(self):
         if self.background:
-            # Usar o background carregado apenas uma vez, centralizado
-            bg_width, bg_height = self.background.get_size()
-            
-            # Centralizar o background no mapa
-            x = (self.width - bg_width) // 2
-            y = (self.height - bg_height) // 2
-            
-            self.surface.blit(self.background, (x, y))
-            
-            # Preencher o resto com cor sólida
-            self.surface.fill((30, 30, 40), (0, 0, x, self.height))  # Esquerda
-            self.surface.fill((30, 30, 40), (x + bg_width, 0, self.width - (x + bg_width), self.height))  # Direita
-            self.surface.fill((30, 30, 40), (x, 0, bg_width, y))  # Topo
-            self.surface.fill((30, 30, 40), (x, y + bg_height, bg_width, self.height - (y + bg_height)))  # Fundo
+            bg_w, bg_h = self.background.get_size()
+            # Tile o background por todo o mapa
+            for ty in range(0, self.height, bg_h):
+                for tx in range(0, self.width, bg_w):
+                    self.surface.blit(self.background, (tx, ty))
         else:
-            # Fallback: criar mapa de cidade destruída
-            ground1 = (60, 60, 70)
-            ground2 = (70, 70, 80)
-            building = (40, 40, 50)
-            road = (30, 30, 35)
+            # Fallback: chão com grade de ruas
+            ground1  = (55, 60, 70)
+            ground2  = (65, 70, 80)
+            road     = (28, 28, 34)
+            building = (38, 38, 48)
 
-            for y in range(0, self.height, self.tile_size):
-
-                for x in range(0, self.width, self.tile_size):
-
-                    # Criar ruas
-                    if (x // self.tile_size) % 8 == 0 or (y // self.tile_size) % 8 == 0:
+            for ty in range(0, self.height, self.tile_size):
+                for tx in range(0, self.width, self.tile_size):
+                    gx = tx // self.tile_size
+                    gy = ty // self.tile_size
+                    if gx % 8 == 0 or gy % 8 == 0:
                         color = road
+                    elif (gx + gy) % 2 == 0:
+                        color = ground1
                     else:
-                        # Alternar cores do chão
-                        if (x//self.tile_size + y//self.tile_size) % 2 == 0:
-                            color = ground1
-                        else:
-                            color = ground2
+                        color = ground2
+                    pygame.draw.rect(self.surface, color,
+                                     (tx, ty, self.tile_size, self.tile_size))
 
-                    pygame.draw.rect(
-                        self.surface,
-                        color,
-                        (
-                            x,
-                            y,
-                            self.tile_size,
-                            self.tile_size
-                        )
-                    )
-
-            # Adicionar alguns blocos de prédios
-            for i in range(0, 50):
-                bx = (i * 100) % (self.width - 200) + 100
-                by = (i * 150) % (self.height - 200) + 100
-                pygame.draw.rect(
-                    self.surface,
-                    building,
-                    (bx, by, 80, 120)
-                )
+            # Alguns prédios
+            for i in range(60):
+                bx = (i * 83)  % (self.width  - 200) + 100
+                by = (i * 127) % (self.height - 200) + 100
+                w  = 60 + (i % 5) * 20
+                h  = 80 + (i % 4) * 30
+                pygame.draw.rect(self.surface, building, (bx, by, w, h))
+                # Janelas
+                for wy in range(by + 10, by + h - 10, 20):
+                    for wx in range(bx + 8, bx + w - 8, 16):
+                        c = (80, 80, 50) if (wy + wx) % 3 == 0 else (40, 40, 30)
+                        pygame.draw.rect(self.surface, c, (wx, wy, 8, 10))
 
     def draw(self, screen, camera):
-        # Desenhar apenas a parte visível do mapa
-        screen.blit(
-            self.surface,
-            camera.camera.topleft
-        )
+        screen.blit(self.surface, camera.camera.topleft)
