@@ -15,12 +15,15 @@ class GameMap:
         self._build()
 
     def _load_bg(self, name):
-        path = os.path.join("assets", "backgrounds", name)
-        if os.path.exists(path):
-            try:
-                return pygame.image.load(path).convert()
-            except Exception:
-                pass
+        # Tentar JPEG primeiro (menor), depois PNG
+        base = name.replace(".png", "")
+        for ext in [".jpg", ".png"]:
+            path = os.path.join("assets", "backgrounds", base + ext)
+            if os.path.exists(path):
+                try:
+                    return pygame.image.load(path).convert()
+                except Exception:
+                    pass
         return None
 
     def _build(self):
