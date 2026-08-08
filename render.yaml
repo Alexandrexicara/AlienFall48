@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: alienfall48
+    runtime: python
+    buildCommand: echo "Build OK"
+    startCommand: python3 serve.py
+    envVars:
+      - key: PORT
+        value: 8000

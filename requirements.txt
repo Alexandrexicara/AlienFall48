@@ -1,0 +1,2 @@
+# Sem dependências externas — o servidor usa apenas stdlib Python
+# O jogo roda no browser via WebAssembly (pygbag build em /docs)

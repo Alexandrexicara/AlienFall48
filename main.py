@@ -1,5 +1,6 @@
 import pygame
 import sys
+import asyncio
 
 from config import *
 
@@ -123,235 +124,125 @@ def start_game(character):
     ]
 
 
+async def main():
 
-running = True
+    global state, player, camera, world, aliens, bullets, weapon
 
+    running = True
 
-while running:
+    while running:
 
+        dt = clock.tick(FPS) / 1000
 
-    dt = clock.tick(FPS) / 1000
+        for event in pygame.event.get():
 
-
-
-    for event in pygame.event.get():
-
-
-        if event.type == pygame.QUIT:
-
-            running = False
-
-
-
-        # MENU
-
-        if state == MENU:
-
-
-            result = menu.update(
-                event
-            )
-
-
-            if result == "NOVO JOGO":
-
-                state = CHARACTER_SELECT
-
-
-
-            if result == "SAIR":
-
+            if event.type == pygame.QUIT:
                 running = False
 
+            # MENU
+            if state == MENU:
+
+                result = menu.update(event)
+
+                if result == "NOVO JOGO":
+                    state = CHARACTER_SELECT
+
+                if result == "SAIR":
+                    running = False
+
+            # CHARACTER SELECT
+            elif state == CHARACTER_SELECT:
+
+                result = character_select.update(event)
+
+                if result:
+                    start_game(result)
+                    state = GAME
+
+            # JOGO
+            elif state == GAME:
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if event.button == 1:
+
+                        mouse = pygame.mouse.get_pos()
+
+                        # Converter coordenada de tela para coordenada de mundo
+                        bullet = weapon.shoot(
+                            player.rect.centerx,
+                            player.rect.centery,
+                            mouse[0] - camera.camera.x,
+                            mouse[1] - camera.camera.y
+                        )
+
+                        if bullet:
+                            bullets.append(bullet)
+
+                if event.type == pygame.KEYDOWN:
+
+                    if event.key == pygame.K_r:
+                        weapon.reload()
+
+
+        # =========================
+        # DESENHO MENU
+        # =========================
+
+        if state == MENU:
+            menu.draw()
+
+        # =========================
         # CHARACTER SELECT
+        # =========================
 
         elif state == CHARACTER_SELECT:
+            character_select.draw()
 
-            result = character_select.update(event)
-
-            if result:
-
-                start_game(result)
-
-                state = GAME
-
-
-
+        # =========================
         # JOGO
+        # =========================
 
         elif state == GAME:
 
+            keys = pygame.key.get_pressed()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            player.update(keys, dt)
 
+            weapon.update(dt)
 
-                if event.button == 1:
+            for alien in aliens:
+                alien.update(player, dt)
 
+            for bullet in bullets:
+                bullet.update(dt)
+                bullet.check_collision(aliens)
 
-                    mouse = pygame.mouse.get_pos()
+            bullets = [b for b in bullets if b.alive]
 
-                    # Converter coordenada de tela para coordenada de mundo
-                    bullet = weapon.shoot(
+            aliens = [a for a in aliens if not a.dead()]
 
-                        player.rect.centerx,
+            camera.update(player)
 
-                        player.rect.centery,
+            screen.fill(BLACK)
 
-                        mouse[0] - camera.camera.x,
+            world.draw(screen, camera)
 
-                        mouse[1] - camera.camera.y
+            for alien in aliens:
+                alien.draw(screen, camera)
 
-                    )
+            for bullet in bullets:
+                bullet.draw(screen, camera)
 
+            player.draw(screen, camera)
 
-                    if bullet:
+            hud.draw(screen, player, weapon)
 
-                        bullets.append(
-                            bullet
-                        )
+        pygame.display.flip()
 
+        await asyncio.sleep(0)
 
+    pygame.quit()
 
-            if event.type == pygame.KEYDOWN:
 
-
-                if event.key == pygame.K_r:
-
-                    weapon.reload()
-
-
-
-    # =========================
-    # DESENHO MENU
-    # =========================
-
-    if state == MENU:
-
-
-        menu.draw()
-
-    # =========================
-    # CHARACTER SELECT
-    # =========================
-
-    elif state == CHARACTER_SELECT:
-
-        character_select.draw()
-
-    # =========================
-    # JOGO
-    # =========================
-
-    elif state == GAME:
-
-
-        keys = pygame.key.get_pressed()
-
-
-        player.update(
-            keys,
-            dt
-        )
-
-
-        weapon.update(
-            dt
-        )
-
-
-
-        for alien in aliens:
-
-            alien.update(
-                player,
-                dt
-            )
-
-
-
-        for bullet in bullets:
-
-            bullet.update(
-                dt
-            )
-
-            bullet.check_collision(
-                aliens
-            )
-
-
-        bullets = [
-
-            b for b in bullets
-
-            if b.alive
-
-        ]
-
-
-
-        aliens = [
-
-            a for a in aliens
-
-            if not a.dead()
-
-        ]
-
-
-
-        camera.update(
-            player
-        )
-
-
-
-        screen.fill(
-            BLACK
-        )
-
-
-
-        world.draw(
-            screen,
-            camera
-        )
-
-
-        for alien in aliens:
-
-            alien.draw(
-                screen,
-                camera
-            )
-
-
-        for bullet in bullets:
-
-            bullet.draw(
-                screen,
-                camera
-            )
-
-
-        player.draw(
-            screen,
-            camera
-        )
-
-
-        hud.draw(
-            screen,
-            player,
-            weapon
-        )
-
-
-
-    pygame.display.flip()
-
-
-
-pygame.quit()
-
-sys.exit()
+asyncio.run(main())
