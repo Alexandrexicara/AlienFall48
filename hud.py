@@ -42,7 +42,7 @@ class HUD:
         )
 
 
-    def draw(self, screen, player):
+    def draw(self, screen, player, weapon=None):
 
         # Nome do personagem
         name_text = self.font.render(
@@ -110,3 +110,15 @@ class HUD:
             energy_text,
             (250, HEIGHT - 35)
         )
+
+        # Munição da arma
+        if weapon is not None:
+            if weapon.reload_timer > 0:
+                ammo_label = "RECARREGANDO..."
+                ammo_color = ORANGE
+            else:
+                ammo_label = f"MUNICAO: {weapon.magazine}/{weapon.max_magazine}"
+                ammo_color = WHITE
+
+            ammo_text = self.font.render(ammo_label, True, ammo_color)
+            screen.blit(ammo_text, (WIDTH - ammo_text.get_width() - 20, HEIGHT - 40))

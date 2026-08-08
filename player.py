@@ -69,18 +69,21 @@ class Player:
         self.x += dx
         self.y += dy
 
-        # Limites da tela
+        # Limites do mundo (5000x5000)
+        MAP_WIDTH = 5000
+        MAP_HEIGHT = 5000
+
         if self.x < 0:
             self.x = 0
 
         if self.y < 0:
             self.y = 0
 
-        if self.x > WIDTH - self.width:
-            self.x = WIDTH - self.width
+        if self.x > MAP_WIDTH - self.width:
+            self.x = MAP_WIDTH - self.width
 
-        if self.y > HEIGHT - self.height:
-            self.y = HEIGHT - self.height
+        if self.y > MAP_HEIGHT - self.height:
+            self.y = MAP_HEIGHT - self.height
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)

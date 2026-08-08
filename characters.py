@@ -51,49 +51,36 @@ class Character:
         ).convert_alpha()]
 
     def load_walk_animation(self, character_folder):
+        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
         frames = []
         for i in range(1, 5):
-            try:
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, f"walk_0{i}.png")
-                ).convert_alpha()
-                frames.append(frame)
-            except:
-                # Se não existir, usa o idle
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, "idle.png")
-                ).convert_alpha()
-                frames.append(frame)
+            path = os.path.join("assets", "player", character_folder, f"walk_0{i}.png")
+            if os.path.exists(path):
+                frames.append(pygame.image.load(path).convert_alpha())
+            else:
+                frames.append(pygame.image.load(idle_path).convert_alpha())
         return frames
 
     def load_run_animation(self, character_folder):
+        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
         frames = []
         for i in range(1, 3):
-            try:
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, f"run_0{i}.png")
-                ).convert_alpha()
-                frames.append(frame)
-            except:
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, "idle.png")
-                ).convert_alpha()
-                frames.append(frame)
+            path = os.path.join("assets", "player", character_folder, f"run_0{i}.png")
+            if os.path.exists(path):
+                frames.append(pygame.image.load(path).convert_alpha())
+            else:
+                frames.append(pygame.image.load(idle_path).convert_alpha())
         return frames
 
     def load_attack_animation(self, character_folder):
+        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
         frames = []
         for i in range(1, 5):
-            try:
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, f"attack_0{i}.png")
-                ).convert_alpha()
-                frames.append(frame)
-            except:
-                frame = pygame.image.load(
-                    os.path.join("assets", "player", character_folder, "idle.png")
-                ).convert_alpha()
-                frames.append(frame)
+            path = os.path.join("assets", "player", character_folder, f"attack_0{i}.png")
+            if os.path.exists(path):
+                frames.append(pygame.image.load(path).convert_alpha())
+            else:
+                frames.append(pygame.image.load(idle_path).convert_alpha())
         return frames
 
     def update_animation(self, dt):

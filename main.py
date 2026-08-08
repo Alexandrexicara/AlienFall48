@@ -190,7 +190,7 @@ while running:
 
                     mouse = pygame.mouse.get_pos()
 
-
+                    # Converter coordenada de tela para coordenada de mundo
                     bullet = weapon.shoot(
 
                         player.rect.centerx,
@@ -342,7 +342,8 @@ while running:
 
         hud.draw(
             screen,
-            player
+            player,
+            weapon
         )
 
 

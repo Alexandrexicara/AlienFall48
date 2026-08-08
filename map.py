@@ -22,18 +22,12 @@ class GameMap:
         """Carrega o background da pasta assets/backgrounds/"""
         try:
             background_path = os.path.join("assets", "backgrounds", background_name)
-            print(f"Tentando carregar: {background_path}")
-            print(f"Arquivo existe: {os.path.exists(background_path)}")
-            
             if os.path.exists(background_path):
                 background = pygame.image.load(background_path).convert()
-                print(f"Background carregado com sucesso: {background.get_size()}")
                 return background
             else:
-                print(f"Background não encontrado: {background_path}")
                 return None
         except Exception as e:
-            print(f"Erro ao carregar background: {e}")
             return None
 
     def create_map(self):
