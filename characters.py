@@ -4,83 +4,45 @@ import os
 
 class Character:
 
-    def __init__(
-        self,
-        name,
-        character_folder,
-        health,
-        speed,
-        damage,
-        skill
-    ):
-
-        self.name = name
+    def __init__(self, name, character_folder, health, speed, damage, skill):
+        self.name   = name
         self.health = health
-        self.speed = speed
+        self.speed  = speed
         self.damage = damage
-        self.skill = skill
+        self.skill  = skill
 
-        # Carregar sprite idle da nova estrutura
-        self.image = pygame.image.load(
-            os.path.join(
-                "assets",
-                "player",
-                character_folder,
-                "idle.png"
-            )
-        ).convert_alpha()
-        
-        # Carregar animações
+        # Sprite idle principal (usado como thumbnail)
+        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
+        self.image = pygame.image.load(idle_path).convert_alpha()
+
+        # Carregar TODOS os frames disponíveis
         self.animations = {
-            "idle": self.load_animation(character_folder, "idle.png"),
-            "walk": self.load_walk_animation(character_folder),
-            "run": self.load_run_animation(character_folder),
-            "attack": self.load_attack_animation(character_folder),
-            "damage": self.load_animation(character_folder, "damage.png"),
-            "death": self.load_animation(character_folder, "death.png")
+            "idle":     self._load_frames(character_folder, ["idle"]),
+            "walk":     self._load_frames(character_folder, ["walk_01","walk_02","walk_03","walk_04"]),
+            "run":      self._load_frames(character_folder, ["run_01","run_02"]),
+            "attack":   self._load_frames(character_folder, ["attack_01","attack_02","attack_03","attack_04"]),
+            "damage":   self._load_frames(character_folder, ["damage"]),
+            "death":    self._load_frames(character_folder, ["death"]),
+            # Aliases usados pelo player.py
+            "walk_01":  self._load_frames(character_folder, ["walk_01","walk_02","walk_03","walk_04"]),
+            "idle_anim":self._load_frames(character_folder, ["idle"]),
         }
-        
+
         self.current_animation = "idle"
         self.frame = 0
         self.animation_timer = 0
-        self.animation_speed = 0.15
+        self.animation_speed = 0.12  # segundos por frame
 
-    def load_animation(self, character_folder, filename):
-        return [pygame.image.load(
-            os.path.join("assets", "player", character_folder, filename)
-        ).convert_alpha()]
-
-    def load_walk_animation(self, character_folder):
-        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
+    def _load_frames(self, folder, names):
+        """Carrega lista de frames; fallback para idle se arquivo não existir."""
+        idle_path = os.path.join("assets", "player", folder, "idle.png")
         frames = []
-        for i in range(1, 5):
-            path = os.path.join("assets", "player", character_folder, f"walk_0{i}.png")
+        for name in names:
+            path = os.path.join("assets", "player", folder, f"{name}.png")
             if os.path.exists(path):
                 frames.append(pygame.image.load(path).convert_alpha())
-            else:
-                frames.append(pygame.image.load(idle_path).convert_alpha())
-        return frames
-
-    def load_run_animation(self, character_folder):
-        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
-        frames = []
-        for i in range(1, 3):
-            path = os.path.join("assets", "player", character_folder, f"run_0{i}.png")
-            if os.path.exists(path):
-                frames.append(pygame.image.load(path).convert_alpha())
-            else:
-                frames.append(pygame.image.load(idle_path).convert_alpha())
-        return frames
-
-    def load_attack_animation(self, character_folder):
-        idle_path = os.path.join("assets", "player", character_folder, "idle.png")
-        frames = []
-        for i in range(1, 5):
-            path = os.path.join("assets", "player", character_folder, f"attack_0{i}.png")
-            if os.path.exists(path):
-                frames.append(pygame.image.load(path).convert_alpha())
-            else:
-                frames.append(pygame.image.load(idle_path).convert_alpha())
+        if not frames:
+            frames = [pygame.image.load(idle_path).convert_alpha()]
         return frames
 
     def update_animation(self, dt):
@@ -96,104 +58,40 @@ class Character:
 
     def set_animation(self, animation_name):
         if animation_name in self.animations:
-            self.current_animation = animation_name
-            self.frame = 0
+            if self.current_animation != animation_name:
+                self.current_animation = animation_name
+                self.frame = 0
 
     def get_current_frame(self):
         frames = self.animations[self.current_animation]
-        return frames[self.frame]
-
+        idx = self.frame % len(frames)
+        return frames[idx]
 
 
 # =========================
 # PERSONAGENS
 # =========================
 
-
 class Warrior(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Guerreiro",
-            "warrior",
-            200,
-            250,
-            30,
-            "Ataque poderoso"
-        )
-
-
+        super().__init__("Guerreiro",       "warrior",  200, 250, 30, "Ataque poderoso")
 
 class Soldier(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Soldado",
-            "soldier",
-            150,
-            280,
-            40,
-            "Rajada de tiros"
-        )
-
-
+        super().__init__("Soldado",         "soldier",  150, 280, 40, "Rajada de tiros")
 
 class Sniper(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Sniper",
-            "sniper",
-            100,
-            220,
-            90,
-            "Tiro de precisão"
-        )
-
-
+        super().__init__("Sniper",          "sniper",   100, 220, 90, "Tiro de precisão")
 
 class Medic(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Médico",
-            "medic",
-            130,
-            240,
-            20,
-            "Cura aliados"
-        )
-
-
+        super().__init__("Médico",          "medic",    130, 240, 20, "Cura aliados")
 
 class Engineer(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Engenheiro",
-            "engineer",
-            170,
-            230,
-            35,
-            "Constrói equipamentos"
-        )
-
-
+        super().__init__("Engenheiro",      "engineer", 170, 230, 35, "Constrói equipamentos")
 
 class Samurai(Character):
-
     def __init__(self):
-
-        super().__init__(
-            "Samurai Futurista",
-            "samurai",
-            220,
-            260,
-            70,
-            "Golpe de energia"
-        )
+        super().__init__("Samurai Futurista","samurai", 220, 260, 70, "Golpe de energia")

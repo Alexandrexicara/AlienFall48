@@ -190,7 +190,9 @@ async def main():
                     wy = my - camera.camera.y
                     new_bullets = weapon.shoot(player.rect.centerx,
                                                player.rect.centery, wx, wy)
-                    bullets.extend(new_bullets)
+                    if new_bullets:
+                        bullets.extend(new_bullets)
+                        player.trigger_attack()
 
                 # Touch
                 if event.type == pygame.FINGERDOWN:
@@ -255,12 +257,20 @@ async def main():
                     wy = player.rect.centery
                 new_bullets = weapon.shoot(player.rect.centerx,
                                            player.rect.centery, wx, wy)
-                bullets.extend(new_bullets)
+                if new_bullets:
+                    bullets.extend(new_bullets)
+                    player.trigger_attack()
 
             weapon.update(dt)
 
             for alien in aliens:
                 alien.update(player, dt)
+                # Dano de contato com alien
+                if alien.rect.colliderect(player.rect) and not alien.is_dying:
+                    player.health -= alien.damage * dt * 0.5
+                    player.trigger_damage()
+                    if player.health < 0:
+                        player.health = 0
 
             for bullet in bullets:
                 bullet.update(dt)
